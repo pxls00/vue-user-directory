@@ -1,9 +1,13 @@
 // sorters.ts — компараторы сортировки пользователей.
-// Почему: чистые функции, стабильная сортировка с фолбэком по id.
-import type { User } from './model.ts';
+import type { User } from '../model/model';
+import { unwrapUserId } from '../model/guards';
+import type { UserSortKey } from '../model/constants';
 
-export type UserSortKey = 'firstName'|'secondName'|'email'|'lastVisitedAt';
 export type UserSorter = (a: User, b: User) => number;
+
+function compareById(a: User, b: User): number {
+  return unwrapUserId(a.id) - unwrapUserId(b.id);
+}
 
 export const sorters: Record<UserSortKey, UserSorter> = {
   firstName: (a, b) => a.firstName.localeCompare(b.firstName, undefined, { sensitivity: 'base' }),
@@ -18,9 +22,7 @@ export function applySort(users: User[], key: UserSortKey, dir: 'asc'|'desc'): U
   return [...users].sort((a, b) => {
     let cmp = cmpKey(a, b);
     if (cmp === 0) {
-      const aid = a.id as unknown as number;
-      const bid = b.id as unknown as number;
-      cmp = aid - bid;
+      cmp = compareById(a, b);
     }
     return cmp * mul;
   });

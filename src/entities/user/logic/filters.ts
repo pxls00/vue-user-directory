@@ -1,6 +1,6 @@
 // filters.ts — предикаты/фильтры для пользователей.
-// Почему: чистые функции, переиспользуемые в сторах и компонентах.
-import type { User } from './model.ts';
+import type { User } from '../model/model';
+import { USER_SEARCH_FIELDS } from '../model/constants';
 
 export type UserFilter = (user: User) => boolean;
 
@@ -12,7 +12,8 @@ export function applyFilters(
   const from = params.filters.lastVisitedFrom?.getTime();
   const to = params.filters.lastVisitedTo?.getTime();
   return users.filter(u => {
-    const matchesQuery = q.length === 0 || `${u.firstName} ${u.secondName} ${u.email}`.toLowerCase().includes(q);
+    const haystack = USER_SEARCH_FIELDS.map(field => String(u[field])).join(' ').toLowerCase();
+    const matchesQuery = q.length === 0 || haystack.includes(q);
     const ts = u.lastVisitedAt.getTime();
     const afterFrom = from == null || ts >= from;
     const beforeTo = to == null || ts <= to;

@@ -1,11 +1,14 @@
 // store.ts — Pinia-стор пользователей.
 // Почему: централизуем данные и UI-состояние, а также применяем фильтрацию/сортировку/пагинацию.
 import { defineStore } from 'pinia';
-import type { User, UserId } from './model.ts';
-import { loadUsers, saveUsers } from './repo';
-import { applyFilters } from './filters.ts';
-import { applySort, type UserSortKey } from './sorters.ts';
-import { paginate } from './paginate.ts';
+import type { User, UserId, CreateUserInput, UpdateUserInput } from './model/model';
+import { makeUserId } from './model/model';
+import { unwrapUserId } from './model/guards';
+import { loadUsers, saveUsers } from './data/repo';
+import { applyFilters } from './logic/filters';
+import { applySort } from './logic/sorters';
+import { USER_DEFAULT_PAGE_SIZE, USER_DEFAULT_SORT, type UserSortKey } from './model/constants';
+import { paginateUsers } from './logic/pagination';
 
 export type UsersSortKey = UserSortKey;
 export type SortDir = 'asc' | 'desc';
@@ -18,9 +21,9 @@ export const useUsersStore = defineStore('users', {
       lastVisitedFrom: undefined as Date | undefined,
       lastVisitedTo: undefined as Date | undefined,
     },
-    sort: { key: 'lastVisitedAt' as UsersSortKey, dir: 'desc' as SortDir },
+    sort: { key: USER_DEFAULT_SORT.key as UsersSortKey, dir: USER_DEFAULT_SORT.dir as SortDir },
     page: 1,
-    pageSize: 10,
+    pageSize: USER_DEFAULT_PAGE_SIZE,
   }),
   getters: {
     filteredUsers(state): User[] {
@@ -30,7 +33,7 @@ export const useUsersStore = defineStore('users', {
       return applySort(this.filteredUsers, state.sort.key, state.sort.dir);
     },
     pagedUsers(state): { items: User[]; total: number; page: number; pageSize: number } {
-      return paginate(this.sortedUsers, state.page, state.pageSize);
+      return paginateUsers(this.sortedUsers, state.page, state.pageSize);
     },
   },
   actions: {
@@ -39,14 +42,15 @@ export const useUsersStore = defineStore('users', {
       this.users = loaded;
       // значения sort/page уже по умолчанию в state
     },
-    async create(userInput: Omit<User, 'id'> & { id?: UserId }): Promise<void> {
+    async create(userInput: CreateUserInput): Promise<void> {
       // Для простоты: сгенерируем временный id как max+1
-      const nextId = (this.users.reduce((m, u) => Math.max(m, (u.id as unknown as number)), 0) + 1) as unknown as UserId;
-      const user: User = { id: (userInput.id ?? nextId) as UserId, ...userInput, lastVisitedAt: userInput.lastVisitedAt } as User;
+      const nextIdNum = this.users.reduce((max, u) => Math.max(max, unwrapUserId(u.id)), 0) + 1;
+      const id: UserId = makeUserId(nextIdNum);
+      const user: User = { id, ...userInput };
       this.users = [...this.users, user];
       saveUsers(this.users);
     },
-    async update(userId: UserId, patch: Partial<User>): Promise<void> {
+    async update(userId: UserId, patch: UpdateUserInput): Promise<void> {
       this.users = this.users.map(u => (u.id === userId ? { ...u, ...patch } : u));
       saveUsers(this.users);
     },

@@ -2,13 +2,13 @@
 import type { User } from '../model/model';
 import type { UserDTO } from '../model/dto';
 import { toUser } from '../model/mappers';
-import { unwrapUserId } from '../model/guards';
 import { USER_STORAGE_KEY } from '../model/constants';
 import { getJSON, setJSON } from '@/shared/storage/local';
+import { buildUser } from '../logic/builders';
 
 function toDTO(user: User): UserDTO {
   return {
-    id: unwrapUserId(user.id),
+    id: (user.id as unknown) as number,
     firstName: user.firstName,
     secondName: user.secondName,
     email: user.email,

@@ -7,6 +7,7 @@ export { USER_STORAGE_KEY, USER_DEFAULT_PAGE_SIZE, USER_SORT_KEYS, type UserSort
 export { applyFilters } from './logic/filters';
 export { applySort } from './logic/sorters';
 export { paginateUsers } from './logic/pagination';
+export { computeNextUserId, buildUser, updateUserIn, removeUserFrom } from './logic/builders';
 export { loadUsers, saveUsers } from './data/repo';
 export { useUsersStore } from './store';
 

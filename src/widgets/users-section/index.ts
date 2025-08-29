@@ -1,1 +1,1 @@
-export { default as UsersSection } from './UsersSection.vue' 
+export { default as UsersSection } from './UsersSection.vue'; 

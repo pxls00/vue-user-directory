@@ -1,10 +1,12 @@
 // routes.ts — маршруты уровня pages для Users
-import type { RouteRecordRaw } from 'vue-router';
+import type { RouteRecordRaw } from 'vue-router'
 
 export const usersRoutes: RouteRecordRaw[] = [
   {
     path: '/users',
+    name: 'users',
     component: () => import('./UsersPage.vue'),
+    meta: { layout: 'default' as const },
   },
-];
+]
 

@@ -1,10 +1,19 @@
 <template>
-  <div class="container">
+  <component :is="layoutAsync">
     <RouterView />
-  </div>
-  <!-- minimal, clean — real styles live in src/styles/main.css -->
+  </component>
 </template>
-<script setup lang="ts"></script>
-<style>
-.container { margin: 0 auto; padding: 16px; max-width: 1200px; }
-</style>
+
+<script setup lang="ts">
+import { computed, defineAsyncComponent } from 'vue'
+import { useRoute } from 'vue-router'
+import { layoutLoaders } from '@/app/layouts'
+
+const route = useRoute()
+const layoutName = computed(() => (route.meta?.layout as keyof typeof layoutLoaders) ?? 'default')
+const layoutAsync = computed(() =>
+  defineAsyncComponent(layoutLoaders[layoutName.value] ?? layoutLoaders.default)
+)
+</script>
+
+

@@ -1,7 +1,7 @@
 // index.ts — публичный API сущности user (контракт)
 // model
 export { type User, type UserId, type UserBase, type CreateUserInput, type UpdateUserInput, makeUserId } from './model/model';
-export { USER_STORAGE_KEY, USER_DEFAULT_PAGE_SIZE, USER_SORT_KEYS, type UserSortKey, USER_SEARCH_FIELDS, type UserSearchField, USER_DEFAULT_SORT, USER_TABLE_COLUMNS, type UserTableColumn, USER_FORM_FIELDS, type UserFormField } from './model/constants';
+export { USER_STORAGE_KEY, USER_DEFAULT_PAGE_SIZE, USER_SORT_KEYS, type UserSortKey, USER_SEARCH_FIELDS, type UserSearchField, USER_DEFAULT_SORT, USER_TABLE_COLUMNS, type UserTableColumn, USER_FORM_FIELDS, type UserFormField, type SortDir } from './model/constants';
 export { isUserId, unwrapUserId } from './model/guards';
 export { toUser } from './model/mappers';
 
@@ -15,5 +15,5 @@ export * from './logic/builders';
 export * from './data/repo';
 
 // store
-export { useUsersStore, type UsersSortKey, type SortDir } from './store';
+export { useUsersStore, type UsersSortKey } from './store';
 

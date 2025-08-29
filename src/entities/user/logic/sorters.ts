@@ -1,7 +1,7 @@
 // sorters.ts — компараторы сортировки пользователей.
 import type { User } from '../model/model';
 import { unwrapUserId } from '../model/guards';
-import type { UserSortKey } from '../model/constants';
+import type { UserSortKey, SortDir } from '../model/constants';
 
 export type UserSorter = (a: User, b: User) => number;
 
@@ -16,7 +16,7 @@ export const sorters: Record<UserSortKey, UserSorter> = {
   lastVisitedAt: (a, b) => a.lastVisitedAt.getTime() - b.lastVisitedAt.getTime(),
 };
 
-export function applySort(users: User[], key: UserSortKey, dir: 'asc'|'desc'): User[] {
+export function applySort(users: User[], key: UserSortKey, dir: SortDir): User[] {
   const mul = dir === 'asc' ? 1 : -1;
   const cmpKey = sorters[key];
   return [...users].sort((a, b) => {

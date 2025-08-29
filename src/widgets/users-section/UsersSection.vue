@@ -1,17 +1,13 @@
 <!-- UsersSection.vue — виджет-оркестратор для страницы пользователей -->
 <template>
-  <PageLayout>
-    <template #header>
-      <div class="users-section__header">
-        <h1 class="users-section__title">Users</h1>
-        <div class="users-section__toolbar">
-          <SearchBar />
-          <button class="users-section__add-btn" type="button" @click="openCreate">
-            Add user
-          </button>
-        </div>
+  <section class="users-section">
+    <header class="users-section__header">
+      <h1 class="users-section__title">Users</h1>
+      <div class="users-section__toolbar">
+        <SearchBar />
+                  <AppButton variant="primary" @click="openCreate">Add user</AppButton>
       </div>
-    </template>
+    </header>
 
     <div class="users-section__table-area">
       <UsersTable
@@ -23,29 +19,28 @@
       />
     </div>
 
-    <template #footer>
+    <div class="users-section__footer">
       <UserPaginationBar />
-    </template>
+    </div>
 
-    <!-- TODO: Replace with TanStack Query mutations -->
-    <Modal :open="isOpen" @close="close">
+    <AppModal :open="isOpen" @close="close">
       <template #title>{{ modalTitle }}</template>
       <UserForm :initial="formInitial" @submit="onSubmit" @cancel="close" />
       <template #footer>
         <button type="button" @click="close">Cancel</button>
       </template>
-    </Modal>
-  </PageLayout>
+    </AppModal>
+  </section>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { PageLayout, Modal } from '@/shared/ui'
-import type { User, UserSortKey } from '@/entities/user'
+import { AppModal, AppButton } from '@/shared/ui'
+import type { User, UserSortKey, SortDir } from '@/entities/user'
 import { UserForm, type UserFormValue, useUserCrud } from '@/features/user-crud'
 import { UserPaginationBar } from '@/features/user-pagination'
 import { SearchBar } from '@/features/user-search'
-import { UsersTable } from '@/widgets/users-table'
+import { UsersTable } from '@/features/users-table'
 import { useUsersStore } from '@/entities/user'
 
 // TODO: Replace with TanStack Query hooks
@@ -93,7 +88,7 @@ function onDelete(user: User) {
   }
 }
 
-function onSortChange(next: { key: UserSortKey; dir: 'asc'|'desc' }) {
+function onSortChange(next: { key: UserSortKey; dir: SortDir }) {
   store.sort = next
 }
 
@@ -131,23 +126,14 @@ async function onSubmit(payload: UserFormValue) {
   gap: 0.75rem;
 }
 
-.users-section__add-btn {
-  padding: 0.5rem 0.75rem;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.15s ease-in-out;
-}
 
-.users-section__add-btn:hover {
-  background-color: #2563eb;
-}
 
 .users-section__table-area {
   background: transparent;
 }
-</style> 
+
+.users-section__footer {
+  display: flex;
+  justify-content: flex-end;
+}
+</style>

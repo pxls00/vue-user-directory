@@ -5,12 +5,11 @@ import type { User, UserId, CreateUserInput, UpdateUserInput } from './model/mod
 import { loadUsers, saveUsers } from './data/repo';
 import { applyFilters, type UserFilterParams } from './logic/filters';
 import { applySort } from './logic/sorters';
-import { USER_DEFAULT_PAGE_SIZE, USER_DEFAULT_SORT, type UserSortKey } from './model/constants';
+import { USER_DEFAULT_PAGE_SIZE, USER_DEFAULT_SORT, type UserSortKey, type SortDir } from './model/constants';
 import { paginateUsers } from './logic/pagination';
 import { computeNextUserId, buildUser, updateUserIn, removeUserFrom } from './logic/builders';
 
 export type UsersSortKey = UserSortKey;
-export type SortDir = 'asc' | 'desc';
 
 export const useUsersStore = defineStore('users', {
   state: () => ({

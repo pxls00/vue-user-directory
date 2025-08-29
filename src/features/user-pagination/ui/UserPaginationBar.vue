@@ -1,6 +1,6 @@
 <!-- UserPaginationBar.vue — пагинация для пользователей -->
 <template>
-  <Pagination
+  <AppPagination
     :page="page"
     :pageSize="pageSize"
     :total="total"
@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { Pagination } from '@/shared/ui'
+import { AppPagination } from '@/shared/ui'
 import { useUserPagination } from '../useUserPagination'
 
 const { page, pageSize, total, pageSizes, setPage, setPageSize } = useUserPagination()

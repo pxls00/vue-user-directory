@@ -1,1 +1,1 @@
-export const USER_PAGE_SIZES = [10, 20, 50] as const 
+export const USER_PAGE_SIZES = [5, 10, 20, 50] as const 

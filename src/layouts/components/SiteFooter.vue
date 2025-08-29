@@ -1,7 +1,7 @@
 <template>
   <footer class="site-footer">
     <div class="site-footer__content">
-      <p class="site-footer__text">&copy; 2024 User Directory. Built with Vue 3 + TypeScript.</p>
+      <p class="site-footer__text">Task Vue + Typescript + Unit Tests + FSD Inspired Arch</p>
     </div>
   </footer>
 </template>

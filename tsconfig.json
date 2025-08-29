@@ -2,7 +2,12 @@
   "compilerOptions": {
     "types": ["vitest/globals", "vite/client", "node"],
     "baseUrl": ".",
-    "paths": { "@/*": ["src/*"] }
+    "paths": { "@/*": ["src/*"] },
+    "moduleResolution": "Bundler",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
   },
+
   "include": ["src", "tests", "env.d.ts", "vite-env.d.ts"]
 }

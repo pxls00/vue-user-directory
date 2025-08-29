@@ -111,20 +111,20 @@ const computedMaxPage = computed(() => {
 })
 
 // Compute states if not provided
-const computedIsFirstPage = computed(() => {
-  if (props.isFirstPage !== undefined) return props.isFirstPage
-  return props.page <= 1
-})
-
-const computedIsLastPage = computed(() => {
-  if (props.isLastPage !== undefined) return props.isLastPage
-  return props.page >= computedMaxPage.value
-})
-
-const computedHasNoData = computed(() => {
-  if (props.hasNoData !== undefined) return props.hasNoData
-  return props.total === 0
-})
+// const computedIsFirstPage = computed(() => {
+//   if (props.isFirstPage !== undefined) return props.isFirstPage
+//   return props.page <= 1
+// })
+//
+// const computedIsLastPage = computed(() => {
+//   if (props.isLastPage !== undefined) return props.isLastPage
+//   return props.page >= computedMaxPage.value
+// })
+//
+// const computedHasNoData = computed(() => {
+//   if (props.hasNoData !== undefined) return props.hasNoData
+//   return props.total === 0
+// })
 
 // Navigation methods with bounds checking
 function goToPage(targetPage: number) {

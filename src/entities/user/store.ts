@@ -28,7 +28,7 @@ export const useUsersStore = defineStore('users', {
       dir: USER_DEFAULT_SORT.dir,
     },
     page: 1,
-    pageSize: USER_DEFAULT_PAGE_SIZE,
+    pageSize: USER_DEFAULT_PAGE_SIZE as number,
   }),
   
   getters: {
@@ -55,7 +55,7 @@ export const useUsersStore = defineStore('users', {
     pagedUsers(state) {
       const params: UserFilterParams = {
         search: state.search,
-        lastVisitedFrom: state.filters.lastVisitedTo,
+        lastVisitedFrom: state.filters.lastVisitedFrom,
         lastVisitedTo: state.filters.lastVisitedTo,
       };
       const filtered = applyFilters(state.users, params);
@@ -120,7 +120,7 @@ export const useUsersStore = defineStore('users', {
     },
     
     setPageSize(pageSize: number): void {
-      this.pageSize = pageSize as typeof USER_DEFAULT_PAGE_SIZE;
+      this.pageSize = Math.max(1, Math.min(pageSize, 100)); // Ограничиваю диапазон
       this.page = 1; // Сброс на первую страницу при изменении размера
     },
   },

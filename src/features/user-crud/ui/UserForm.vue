@@ -1,88 +1,200 @@
 <!-- UserForm.vue — форма редактирования/создания пользователя -->
 <template>
   <form class="userform" @submit.prevent="onSubmit">
-    <div class="userform__row">
-      <label>First name</label>
-      <input v-model="firstName" type="text" required />
-    </div>
-    <div class="userform__row">
-      <label>Second name</label>
-      <input v-model="secondName" type="text" required />
-    </div>
-    <div class="userform__row">
-      <label>Email</label>
-      <input v-model="email" type="email" required />
-    </div>
-    <div class="userform__row">
-      <label>Last visited at</label>
-      <input v-model="lastVisitedAtInput" type="datetime-local" required />
-    </div>
+    <FieldRow 
+      id="firstName" 
+      label="Имя"
+      :error="error"
+    >
+      <AppInput
+        v-model="firstName"
+        type="text"
+        required
+        autocomplete="given-name"
+      />
+    </FieldRow>
+
+    <FieldRow 
+      id="secondName" 
+      label="Фамилия"
+      :error="error"
+    >
+      <AppInput
+        v-model="secondName"
+        type="text"
+        required
+        autocomplete="family-name"
+      />
+    </FieldRow>
+
+    <FieldRow 
+      id="email" 
+      label="Email"
+      :error="error"
+    >
+      <AppInput
+        v-model="email"
+        type="email"
+        required
+        autocomplete="email"
+      />
+    </FieldRow>
+
+    <FieldRow 
+      id="lastVisitedAt" 
+      label="Дата последнего посещения"
+      :error="error"
+    >
+      <AppInput
+        v-model="lastVisitedAtInput"
+        type="datetime-local"
+        required
+      />
+    </FieldRow>
+
     <div class="userform__actions">
-      <button type="submit">Submit</button>
+      <button type="button" @click="onCancel" class="userform__btn userform__btn--secondary">
+        Отмена
+      </button>
+      <button type="submit" class="userform__btn userform__btn--primary">
+        Сохранить
+      </button>
     </div>
-    <p v-if="error" class="userform__error">{{ error }}</p>
+
+    <p v-if="error" class="userform__error" role="alert">
+      {{ error }}
+    </p>
   </form>
 </template>
+
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import { z } from 'zod';
+import { ref, onMounted } from 'vue'
+import { FieldRow, AppInput } from '@/shared/ui'
+import { toLocalDateTimeInputValue, fromLocalDateTimeInputValue } from '@/shared/lib'
+import { UserFormSchema, type UserFormValue } from '../validation'
 
-const emit = defineEmits<{
-  (e: 'submit', payload: { firstName: string; secondName: string; email: string; lastVisitedAt: Date }): void;
-}>();
-
-const props = defineProps<{ initial?: { firstName?: string; secondName?: string; email?: string; lastVisitedAt?: Date } }>();
-
-const firstName = ref(props.initial?.firstName ?? '');
-const secondName = ref(props.initial?.secondName ?? '');
-const email = ref(props.initial?.email ?? '');
-const lastVisitedAtInput = ref<string>('');
-const error = ref<string | null>(null);
-
-watch(
-  () => props.initial?.lastVisitedAt,
-  (v) => {
-    if (v) lastVisitedAtInput.value = toLocalDateTimeInputValue(v);
-  },
-  { immediate: true }
-);
-
-const Schema = z.object({
-  firstName: z.string().min(1),
-  secondName: z.string().min(1),
-  email: z.string().email(),
-  lastVisitedAt: z.date(),
-});
-
-function toLocalDateTimeInputValue(d: Date): string {
-  const pad = (n: number) => n.toString().padStart(2, '0');
-  const yyyy = d.getFullYear();
-  const MM = pad(d.getMonth() + 1);
-  const dd = pad(d.getDate());
-  const hh = pad(d.getHours());
-  const mm = pad(d.getMinutes());
-  return `${yyyy}-${MM}-${dd}T${hh}:${mm}`;
+interface UserFormProps {
+  initial?: Partial<UserFormValue>
 }
 
-function onSubmit() {
-  error.value = null;
-  try {
-    const parsed = Schema.parse({
-      firstName: firstName.value.trim(),
-      secondName: secondName.value.trim(),
-      email: email.value.trim(),
-      lastVisitedAt: new Date(lastVisitedAtInput.value),
-    });
-    emit('submit', parsed);
-  } catch (e) {
-    error.value = (e as Error).message ?? 'Validation error';
+type Emits = {
+  (e: 'submit', payload: UserFormValue): void
+  (e: 'cancel'): void
+}
+
+const emit = defineEmits<Emits>()
+const props = defineProps<UserFormProps>()
+
+// Internal state
+const firstName = ref(props.initial?.firstName ?? '')
+const secondName = ref(props.initial?.secondName ?? '')
+const email = ref(props.initial?.email ?? '')
+const lastVisitedAtInput = ref<string>('')
+const error = ref<string | null>(null)
+
+// Initialize date input on mount
+onMounted(() => {
+  if (props.initial?.lastVisitedAt) {
+    lastVisitedAtInput.value = toLocalDateTimeInputValue(props.initial.lastVisitedAt)
+  }
+})
+
+// Build form value from refs
+function buildFormValue(): UserFormValue | null {
+  const date = fromLocalDateTimeInputValue(lastVisitedAtInput.value)
+  if (!date) {
+    return null
+  }
+
+  return {
+    firstName: firstName.value.trim(),
+    secondName: secondName.value.trim(),
+    email: email.value.trim(),
+    lastVisitedAt: date
   }
 }
+
+// Validate form value with Zod
+function validateFormValue(v: UserFormValue): UserFormValue {
+  return UserFormSchema.parse(v)
+}
+
+// Handle form submission
+function onSubmit() {
+  error.value = null
+  
+  const built = buildFormValue()
+  if (!built) {
+    error.value = 'Некорректная дата'
+    return
+  }
+
+  try {
+    const parsed = validateFormValue(built)
+    emit('submit', parsed)
+  } catch (e) {
+    if (e instanceof Error) {
+      error.value = e.message
+    } else {
+      error.value = 'Ошибка валидации'
+    }
+  }
+}
+
+// Handle cancel
+function onCancel() {
+  emit('cancel')
+}
 </script>
+
 <style scoped>
-.userform { display: grid; gap: 12px; }
-.userform__row { display: grid; gap: 4px; }
-.userform__actions { display: flex; justify-content: flex-end; gap: 8px; }
-.userform__error { color: #c00; }
+.userform {
+  display: grid;
+  gap: 1rem;
+}
+
+.userform__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.userform__btn {
+  padding: 0.5rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.userform__btn--primary {
+  background-color: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.userform__btn--primary:hover {
+  background-color: #2563eb;
+  border-color: #2563eb;
+}
+
+.userform__btn--secondary {
+  background-color: white;
+  color: #374151;
+}
+
+.userform__btn--secondary:hover {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.userform__error {
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin: 0;
+}
 </style>
 

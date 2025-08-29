@@ -4,11 +4,11 @@ import type { UserDTO } from '../model/dto';
 import { toUser } from '../model/mappers';
 import { USER_STORAGE_KEY } from '../model/constants';
 import { getJSON, setJSON } from '@/shared/storage/local';
-import { buildUser } from '../logic/builders';
+import { unwrapUserId } from '../model/guards';
 
 function toDTO(user: User): UserDTO {
   return {
-    id: (user.id as unknown) as number,
+    id: unwrapUserId(user.id),
     firstName: user.firstName,
     secondName: user.secondName,
     email: user.email,

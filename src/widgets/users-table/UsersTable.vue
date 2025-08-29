@@ -11,7 +11,7 @@
       </tr>
     </thead>
     <tbody>
-      <tr v-for="u in users" :key="(u.id as unknown as number)">
+      <tr v-for="u in users" :key="String(u.id)">
         <td>{{ u.firstName }}</td>
         <td>{{ u.secondName }}</td>
         <td>{{ u.email }}</td>

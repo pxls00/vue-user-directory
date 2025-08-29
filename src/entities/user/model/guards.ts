@@ -6,6 +6,6 @@ export function isUserId(value: unknown): value is UserId {
 }
 
 export function unwrapUserId(id: UserId): number {
-  return (id as unknown) as number;
+  return Number(id);
 }
 

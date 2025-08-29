@@ -1,4 +1,3 @@
-// filters.ts — предикаты/фильтры для пользователей.
 import type { User } from '../model/model';
 import { USER_SEARCH_FIELDS, type UserSearchField } from '../model/constants';
 

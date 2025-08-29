@@ -1,4 +1,3 @@
-<!-- Modal.vue — универсальное модальное окно -->
 <template>
   <Teleport to="body">
     <div 

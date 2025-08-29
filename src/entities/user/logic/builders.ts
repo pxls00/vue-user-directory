@@ -1,4 +1,3 @@
-// builders.ts — чистые функции для построения и изменения пользователей
 import { makeUserId, type User, type UserBase, type UserId } from '../model/model';
 import { unwrapUserId } from '../model/guards';
 

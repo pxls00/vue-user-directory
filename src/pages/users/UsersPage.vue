@@ -1,4 +1,3 @@
-<!-- UsersPage.vue — thin route wrapper with async loading -->
 <template>
   <Suspense>
     <template #default>

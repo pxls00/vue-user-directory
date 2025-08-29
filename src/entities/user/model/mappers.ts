@@ -1,4 +1,3 @@
-// mappers.ts — преобразования DTO→Domain.
 import type { UserDTO } from './dto';
 import type { User } from './model';
 import { makeUserId } from './model';

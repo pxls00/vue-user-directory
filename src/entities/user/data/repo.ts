@@ -1,4 +1,3 @@
-// repo.ts — источник данных пользователей. I/O изолирован.
 import type { User } from '../model/model';
 import type { UserDTO } from '../model/dto';
 import { toUser } from '../model/mappers';

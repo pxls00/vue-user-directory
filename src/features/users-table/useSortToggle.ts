@@ -2,7 +2,6 @@ import type { SortDir, UserSortKey } from '@/entities/user'
 
 export interface SortState { key: UserSortKey; dir: SortDir  }
 
-// consumers pass a getter so we always read the freshest state
 export function useSortToggle(current: () => SortState) {
   function nextFor(key: UserSortKey): SortState {
     const prev = current()

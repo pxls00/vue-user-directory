@@ -1,5 +1,3 @@
-// store.ts — Pinia-стор пользователей.
-// Почему: UI-состояние отделено от данных, логика разложена по слоям.
 import { defineStore } from 'pinia';
 import type { User, UserId, CreateUserInput, UpdateUserInput } from './model/model';
 import { loadUsers, saveUsers } from './data/repo';
@@ -13,11 +11,9 @@ export type UsersSortKey = UserSortKey;
 
 export const useUsersStore = defineStore('users', {
   state: () => ({
-    // Данные
     users: [] as User[],
     isLoading: false,
     
-    // UI-состояние
     search: '',
     filters: {
       lastVisitedFrom: undefined as Date | undefined,
@@ -32,7 +28,6 @@ export const useUsersStore = defineStore('users', {
   }),
   
   getters: {
-    // Вычисляемые данные: каждый геттер независим
     filteredUsers(state): User[] {
       const params: UserFilterParams = {
         search: state.search,
@@ -63,7 +58,6 @@ export const useUsersStore = defineStore('users', {
       return paginateUsers(sorted, state.page, state.pageSize);
     },
     
-    // Простые геттеры для UI
     total(state): number {
       const params: UserFilterParams = {
         search: state.search,
@@ -75,7 +69,6 @@ export const useUsersStore = defineStore('users', {
   },
   
   actions: {
-    // Инициализация данных
     async init(): Promise<void> {
       this.isLoading = true;
       try {
@@ -85,7 +78,6 @@ export const useUsersStore = defineStore('users', {
       }
     },
     
-    // CRUD операции через builders
     async create(userInput: CreateUserInput): Promise<void> {
       const id = computeNextUserId(this.users);
       const user = buildUser(id, userInput);
@@ -103,21 +95,20 @@ export const useUsersStore = defineStore('users', {
       await saveUsers(this.users);
     },
     
-    // UI-действия
     setSearch(value: string): void {
       this.search = value;
-      this.page = 1; // Сброс пагинации при поиске
+      this.page = 1;
     },
     
     setFilters(filters: { lastVisitedFrom?: Date; lastVisitedTo?: Date }): void {
       this.filters.lastVisitedFrom = filters.lastVisitedFrom;
       this.filters.lastVisitedTo = filters.lastVisitedTo;
-      this.page = 1; // Сброс пагинации при изменении фильтров
+      this.page = 1;
     },
     
     setSort(key: UsersSortKey, dir: SortDir): void {
       this.sort = { key, dir };
-      this.page = 1; // Сброс пагинации при изменении сортировки
+      this.page = 1;
     },
     
     setPage(page: number): void {
@@ -125,8 +116,8 @@ export const useUsersStore = defineStore('users', {
     },
     
     setPageSize(pageSize: number): void {
-      this.pageSize = Math.max(1, Math.min(pageSize, 100)); // Ограничиваю диапазон
-      this.page = 1; // Сброс на первую страницу при изменении размера
+      this.pageSize = Math.max(1, Math.min(pageSize, 100));
+      this.page = 1;
     },
   },
 });

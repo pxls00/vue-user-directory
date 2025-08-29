@@ -1,4 +1,3 @@
-// local.ts — обёртка над localStorage. Почему: централизуем доступ и сериализацию JSON.
 export const local = {
   get: (key: string): string | null => {
     try { return window.localStorage.getItem(key); } catch { return null; }

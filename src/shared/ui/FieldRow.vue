@@ -1,6 +1,5 @@
 <template>
   <div class="field-row">
-    <!-- Label -->
     <label 
       v-if="label || $slots.label" 
       :for="id" 
@@ -9,12 +8,10 @@
       <slot name="label">{{ label }}</slot>
     </label>
 
-    <!-- Input slot -->
     <div class="field-row__input">
       <slot />
     </div>
 
-    <!-- Hint -->
     <div 
       v-if="hint" 
       class="field-row__hint"
@@ -23,7 +20,6 @@
       {{ hint }}
     </div>
 
-    <!-- Error -->
     <div 
       v-if="error || $slots.error" 
       class="field-row__error"

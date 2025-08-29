@@ -1,4 +1,3 @@
-<!-- UserForm.vue — форма редактирования/создания пользователя -->
 <template>
   <form class="userform" @submit.prevent="onSubmit">
     <FieldRow 

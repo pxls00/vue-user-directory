@@ -1,4 +1,3 @@
-<!-- SearchBar.vue — UI-компонент поиска -->
 <template>
   <div class="searchbar">
     <AppInput 

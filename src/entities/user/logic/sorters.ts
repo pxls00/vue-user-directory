@@ -1,4 +1,3 @@
-// sorters.ts — компараторы сортировки пользователей.
 import type { User } from '../model/model';
 import { unwrapUserId } from '../model/guards';
 import type { UserSortKey, SortDir } from '../model/constants';

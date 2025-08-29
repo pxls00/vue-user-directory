@@ -22,7 +22,6 @@ export function fromLocalDateTimeInputValue(s: string): Date | null {
     return null
   }
   
-  // Validate format: YYYY-MM-DDTHH:mm
   const dateTimeRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/
   if (!dateTimeRegex.test(s)) {
     return null
@@ -30,7 +29,6 @@ export function fromLocalDateTimeInputValue(s: string): Date | null {
   
   const date = new Date(s)
   
-  // Check if date is valid
   if (isNaN(date.getTime())) {
     return null
   }

@@ -10,7 +10,7 @@
 </template>
 
 <script setup lang="ts">
-// Header component with slot for right-side actions
+
 </script>
 
 <style scoped>

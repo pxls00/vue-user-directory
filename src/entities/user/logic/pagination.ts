@@ -1,4 +1,3 @@
-// pagination.ts — тонкая доменная обёртка над shared пагинацией
 import { paginate, type PageSlice } from '@/shared/lib/paginate';
 import type { User } from '../model/model';
 

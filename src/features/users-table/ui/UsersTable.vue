@@ -1,4 +1,3 @@
-<!-- UsersTable.vue — feature таблицы пользователей -->
 <template>
   <table class="ut">
     <thead>

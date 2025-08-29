@@ -1,4 +1,3 @@
-// debounce.ts — утилита debounce
 export function debounce<T extends (...args: any[]) => unknown>(fn: T, ms: number): T {
   let timer: ReturnType<typeof setTimeout> | null = null;
   const wrapped = function(this: unknown, ...args: Parameters<T>) {

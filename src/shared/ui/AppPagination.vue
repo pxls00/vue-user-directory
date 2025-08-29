@@ -1,7 +1,5 @@
-<!-- Pagination.vue — универсальный компонент пагинации -->
 <template>
   <div class="pagination">
-    <!-- Page size selector -->
     <div class="pagination__size-selector">
       <label for="page-size" class="pagination__size-label">Show:</label>
       <select 
@@ -20,7 +18,6 @@
       </select>
     </div>
 
-    <!-- Page navigation -->
     <div class="pagination__navigation">
       <AppButton 
         type="button"

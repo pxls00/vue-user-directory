@@ -1,4 +1,3 @@
-<!-- UsersSection.vue — виджет-оркестратор для страницы пользователей -->
 <template>
   <section class="users-section">
     <header class="users-section__header">
@@ -40,26 +39,16 @@ import { SearchBar } from '@/features/user-search'
 import { UsersTable } from '@/features/users-table'
 import { useUsersStore } from '@/entities/user'
 
-// TODO: Replace with TanStack Query hooks
-// const { data: users, isLoading, error } = useUsersQuery()
-// const { mutate: createUser } = useCreateUserMutation()
-// const { mutate: updateUser } = useUpdateUserMutation()
-// const { mutate: deleteUser } = useDeleteUserMutation()
-
 const store = useUsersStore()
 const crud = useUserCrud()
 
-// Инициализация данных сразу при создании компонента
 store.init()
 
-// Computed values from store (will be replaced with queries)
 const paged = computed(() => store.pagedUsers)
 const sort = computed(() => store.sort)
 
-// CRUD state
 const { isOpen, mode, selected, open, close, submitCreate, submitEdit, confirmDelete } = crud
 
-// Computed values for modal
 const modalTitle = computed(() => 
   mode.value === 'edit' ? 'Edit user' : 'Create user'
 )
@@ -73,7 +62,6 @@ const formInitial = computed(() =>
   } : undefined
 )
 
-// Event handlers
 function openCreate() {
   open('create')
 }

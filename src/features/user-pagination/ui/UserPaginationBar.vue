@@ -1,4 +1,3 @@
-<!-- UserPaginationBar.vue — пагинация для пользователей -->
 <template>
   <AppPagination
     :page="page"

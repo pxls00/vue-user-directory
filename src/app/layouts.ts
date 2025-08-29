@@ -1,4 +1,3 @@
-// Map layout names to async components
 export const layoutLoaders = {
   default: () => import('@/layouts/DefaultLayout.vue'),
 } as const

@@ -1,5 +1,3 @@
-// useUserCrud.ts — композиционный хук для CRUD операций над пользователем
-// Почему: UI-состояние модалки и операции над стором в одном месте.
 import { ref } from 'vue'
 import { useUsersStore } from '@/entities/user'
 import type { User, UserId, CreateUserInput, UpdateUserInput } from '@/entities/user'
@@ -13,7 +11,6 @@ export function useUserCrud() {
   const selected = ref<User | null>(null)
   const error = ref<string | null>(null)
 
-  // Helper functions for payload conversion
   function toCreatePayload(form: UserFormValue): CreateUserInput {
     return {
       firstName: form.firstName,
@@ -33,13 +30,12 @@ export function useUserCrud() {
     }
   }
 
-  // Single entry point for opening modal
   function open(crudMode: CrudMode, user?: User) {
-    if (crudMode === CRUD_MODES[0]) { // create
+    if (crudMode === CRUD_MODES[0]) {
       selected.value = null
-    } else if (crudMode === CRUD_MODES[1] && user) { // edit
+    } else if (crudMode === CRUD_MODES[1] && user) {
       selected.value = user
-    } else if (crudMode === CRUD_MODES[2] && user) { // delete
+    } else if (crudMode === CRUD_MODES[2] && user) {
       selected.value = user
     } else {
       throw new Error(`Invalid mode: ${crudMode} or missing user for ${crudMode}`)
@@ -57,7 +53,6 @@ export function useUserCrud() {
     error.value = null
   }
 
-  // CRUD handlers
   async function submitCreate(form: UserFormValue) {
     try {
       const payload = toCreatePayload(form)
@@ -65,7 +60,7 @@ export function useUserCrud() {
       close()
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Create failed'
-      throw e // Re-throw to let caller handle
+      throw e
     }
   }
 
@@ -76,7 +71,7 @@ export function useUserCrud() {
       close()
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Update failed'
-      throw e // Re-throw to let caller handle
+      throw e
     }
   }
 
@@ -86,7 +81,7 @@ export function useUserCrud() {
       close()
     } catch (e) {
       error.value = e instanceof Error ? e.message : 'Delete failed'
-      throw e // Re-throw to let caller handle
+      throw e
     }
   }
 

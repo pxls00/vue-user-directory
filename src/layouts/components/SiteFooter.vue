@@ -7,7 +7,7 @@
 </template>
 
 <script setup lang="ts">
-// Minimal footer component
+
 </script>
 
 <style scoped>

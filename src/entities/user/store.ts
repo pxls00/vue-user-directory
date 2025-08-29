@@ -1,9 +1,9 @@
 // store.ts — Pinia-стор пользователей.
-// Почему: централизуем данные и UI-состояние, а также применяем фильтрацию/сортировку/пагинацию.
+// Почему: UI-состояние отделено от данных, логика разложена по слоям.
 import { defineStore } from 'pinia';
 import type { User, UserId, CreateUserInput, UpdateUserInput } from './model/model';
 import { loadUsers, saveUsers } from './data/repo';
-import { applyFilters } from './logic/filters';
+import { applyFilters, type UserFilterParams } from './logic/filters';
 import { applySort } from './logic/sorters';
 import { USER_DEFAULT_PAGE_SIZE, USER_DEFAULT_SORT, type UserSortKey } from './model/constants';
 import { paginateUsers } from './logic/pagination';
@@ -14,46 +14,114 @@ export type SortDir = 'asc' | 'desc';
 
 export const useUsersStore = defineStore('users', {
   state: () => ({
+    // Данные
     users: [] as User[],
-    search: '' as string,
+    
+    // UI-состояние
+    search: '',
     filters: {
       lastVisitedFrom: undefined as Date | undefined,
       lastVisitedTo: undefined as Date | undefined,
     },
-    sort: { key: USER_DEFAULT_SORT.key as UsersSortKey, dir: USER_DEFAULT_SORT.dir as SortDir },
+    sort: {
+      key: USER_DEFAULT_SORT.key,
+      dir: USER_DEFAULT_SORT.dir,
+    },
     page: 1,
     pageSize: USER_DEFAULT_PAGE_SIZE,
   }),
+  
   getters: {
+    // Вычисляемые данные: каждый геттер независим
     filteredUsers(state): User[] {
-      return applyFilters(state.users, { search: state.search, filters: state.filters });
+      const params: UserFilterParams = {
+        search: state.search,
+        lastVisitedFrom: state.filters.lastVisitedFrom,
+        lastVisitedTo: state.filters.lastVisitedTo,
+      };
+      return applyFilters(state.users, params);
     },
+    
     sortedUsers(state): User[] {
-      return applySort(this.filteredUsers, state.sort.key, state.sort.dir);
+      const params: UserFilterParams = {
+        search: state.search,
+        lastVisitedFrom: state.filters.lastVisitedFrom,
+        lastVisitedTo: state.filters.lastVisitedTo,
+      };
+      const filtered = applyFilters(state.users, params);
+      return applySort(filtered, state.sort.key, state.sort.dir);
     },
-    pagedUsers(state): { items: User[]; total: number; page: number; pageSize: number } {
-      return paginateUsers(this.sortedUsers, state.page, state.pageSize);
+    
+    pagedUsers(state) {
+      const params: UserFilterParams = {
+        search: state.search,
+        lastVisitedFrom: state.filters.lastVisitedTo,
+        lastVisitedTo: state.filters.lastVisitedTo,
+      };
+      const filtered = applyFilters(state.users, params);
+      const sorted = applySort(filtered, state.sort.key, state.sort.dir);
+      return paginateUsers(sorted, state.page, state.pageSize);
+    },
+    
+    // Простые геттеры для UI
+    total(state): number {
+      const params: UserFilterParams = {
+        search: state.search,
+        lastVisitedFrom: state.filters.lastVisitedFrom,
+        lastVisitedTo: state.filters.lastVisitedTo,
+      };
+      return applyFilters(state.users, params).length;
     },
   },
+  
   actions: {
+    // Инициализация данных
     async init(): Promise<void> {
-      const loaded = await loadUsers();
-      this.users = loaded;
-      // значения sort/page уже по умолчанию в state
+      this.users = await loadUsers();
     },
+    
+    // CRUD операции через builders
     async create(userInput: CreateUserInput): Promise<void> {
       const id = computeNextUserId(this.users);
       const user = buildUser(id, userInput);
       this.users = [...this.users, user];
-      saveUsers(this.users);
+      await saveUsers(this.users);
     },
+    
     async update(userId: UserId, patch: UpdateUserInput): Promise<void> {
       this.users = updateUserIn(this.users, userId, patch);
-      saveUsers(this.users);
+      await saveUsers(this.users);
     },
+    
     async remove(userId: UserId): Promise<void> {
       this.users = removeUserFrom(this.users, userId);
-      saveUsers(this.users);
+      await saveUsers(this.users);
+    },
+    
+    // UI-действия
+    setSearch(value: string): void {
+      this.search = value;
+      this.page = 1; // Сброс пагинации при поиске
+    },
+    
+    setFilters(filters: { lastVisitedFrom?: Date; lastVisitedTo?: Date }): void {
+      this.filters.lastVisitedFrom = filters.lastVisitedFrom;
+      this.filters.lastVisitedTo = filters.lastVisitedTo;
+      this.page = 1; // Сброс пагинации при изменении фильтров
+    },
+    
+    setSort(key: UsersSortKey, dir: SortDir): void {
+      this.sort = { key, dir };
+      this.page = 1; // Сброс пагинации при изменении сортировки
+    },
+    
+    setPage(page: number): void {
+      this.page = page;
+    },
+    
+    setPageSize(pageSize: number): void {
+      this.pageSize = pageSize as typeof USER_DEFAULT_PAGE_SIZE;
+      this.page = 1; // Сброс на первую страницу при изменении размера
     },
   },
 });

@@ -3,7 +3,7 @@ import App from '../App.vue';
 import { createPiniaApp } from './pinia';
 import { createRouterApp } from './router';
 import '@/styles/main.css';
-import { useUsersStore } from '@/entities/user/store';
+import { useUsersStore } from '@/entities/user';
 
 export function mountApp(selector = '#app') {
   const app = createApp(App);

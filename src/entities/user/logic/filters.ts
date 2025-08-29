@@ -1,23 +1,33 @@
 // filters.ts — предикаты/фильтры для пользователей.
 import type { User } from '../model/model';
-import { USER_SEARCH_FIELDS } from '../model/constants';
+import { USER_SEARCH_FIELDS, type UserSearchField } from '../model/constants';
 
-export type UserFilter = (user: User) => boolean;
+export interface UserFilterParams {
+  search: string;
+  lastVisitedFrom?: Date;
+  lastVisitedTo?: Date;
+}
 
-export function applyFilters(
-  users: User[],
-  params: { search: string; filters: { lastVisitedFrom?: Date; lastVisitedTo?: Date } }
-): User[] {
-  const q = params.search.trim().toLowerCase();
-  const from = params.filters.lastVisitedFrom?.getTime();
-  const to = params.filters.lastVisitedTo?.getTime();
-  return users.filter(u => {
-    const haystack = USER_SEARCH_FIELDS.map(field => String(u[field])).join(' ').toLowerCase();
-    const matchesQuery = q.length === 0 || haystack.includes(q);
+function normalize(s: string): string { 
+  return s.trim().toLowerCase(); 
+}
+
+function userSearchText(u: User, fields: readonly UserSearchField[]): string {
+  return fields.map(f => String(u[f] ?? '')).join(' ').toLowerCase();
+}
+
+export function applyFilters(list: readonly User[], p: UserFilterParams): User[] {
+  const q = normalize(p.search);
+  const from = p.lastVisitedFrom?.getTime();
+  const to = p.lastVisitedTo?.getTime();
+  
+  return list.filter(u => {
+    const hay = userSearchText(u, USER_SEARCH_FIELDS);
     const ts = u.lastVisitedAt.getTime();
-    const afterFrom = from == null || ts >= from;
-    const beforeTo = to == null || ts <= to;
-    return matchesQuery && afterFrom && beforeTo;
+    const matchQ = q === '' || hay.includes(q);
+    const matchFrom = from == null || ts >= from;
+    const matchTo = to == null || ts <= to;
+    return matchQ && matchFrom && matchTo;
   });
 }
 

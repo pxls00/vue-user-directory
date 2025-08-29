@@ -25,8 +25,7 @@
   </table>
 </template>
 <script setup lang="ts">
-import type { User } from '@/entities/user';
-import type { UsersSortKey } from '@/entities/user/store';
+import type { User, UsersSortKey } from '@/entities/user';
 
 const props = defineProps<{
   users: User[];

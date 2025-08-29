@@ -62,6 +62,7 @@ defineProps<FieldRowProps>()
 
 .field-row__input {
   width: 100%;
+  display: flex;
 }
 
 .field-row__hint {

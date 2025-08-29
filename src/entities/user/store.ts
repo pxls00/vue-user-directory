@@ -15,6 +15,7 @@ export const useUsersStore = defineStore('users', {
   state: () => ({
     // Данные
     users: [] as User[],
+    isLoading: false,
     
     // UI-состояние
     search: '',
@@ -76,7 +77,12 @@ export const useUsersStore = defineStore('users', {
   actions: {
     // Инициализация данных
     async init(): Promise<void> {
-      this.users = await loadUsers();
+      this.isLoading = true;
+      try {
+        this.users = await loadUsers();
+      } finally {
+        this.isLoading = false;
+      }
     },
     
     // CRUD операции через builders

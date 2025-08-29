@@ -53,12 +53,12 @@
     </FieldRow>
 
     <div class="userform__actions">
-      <button type="button" @click="onCancel" class="userform__btn userform__btn--secondary">
+      <AppButton type="button" @click="onCancel" variant="ghost">
         Отмена
-      </button>
-      <button type="submit" class="userform__btn userform__btn--primary">
+      </AppButton>
+      <AppButton type="submit" variant="primary">
         Сохранить
-      </button>
+      </AppButton>
     </div>
 
     <p v-if="error" class="userform__error" role="alert">
@@ -69,7 +69,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { FieldRow, AppInput } from '@/shared/ui'
+import { FieldRow, AppInput, AppButton } from '@/shared/ui'
 import { toLocalDateTimeInputValue, fromLocalDateTimeInputValue } from '@/shared/lib'
 import { UserFormSchema, type UserFormValue } from '../validation'
 
@@ -158,37 +158,6 @@ function onCancel() {
   justify-content: flex-end;
   gap: 0.5rem;
   margin-top: 1rem;
-}
-
-.userform__btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
-}
-
-.userform__btn--primary {
-  background-color: #3b82f6;
-  color: white;
-  border-color: #3b82f6;
-}
-
-.userform__btn--primary:hover {
-  background-color: #2563eb;
-  border-color: #2563eb;
-}
-
-.userform__btn--secondary {
-  background-color: white;
-  color: #374151;
-}
-
-.userform__btn--secondary:hover {
-  background-color: #f9fafb;
-  border-color: #9ca3af;
 }
 
 .userform__error {

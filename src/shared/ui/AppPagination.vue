@@ -22,55 +22,56 @@
 
     <!-- Page navigation -->
     <div class="pagination__navigation">
-      <button 
+      <AppButton 
         type="button"
         @click="goToPage(1)"
         :disabled="page <= 1"
-        class="pagination__btn pagination__btn--first"
         aria-label="Go to first page"
+        size="sm"
       >
         First
-      </button>
+      </AppButton>
       
-      <button 
+      <AppButton 
         type="button"
         @click="goToPage(page - 1)"
         :disabled="page <= 1"
-        class="pagination__btn pagination__btn--prev"
         aria-label="Go to previous page"
+        size="sm"
       >
         Prev
-      </button>
+      </AppButton>
       
       <span class="pagination__info">
         Page {{ page }} of {{ maxPage }}
       </span>
       
-      <button 
+      <AppButton 
         type="button"
         @click="goToPage(page + 1)"
         :disabled="page >= maxPage"
-        class="pagination__btn pagination__btn--next"
         aria-label="Go to next page"
+        size="sm"
       >
         Next
-      </button>
+      </AppButton>
       
-      <button 
+      <AppButton 
         type="button"
         @click="goToPage(maxPage)"
         :disabled="page >= maxPage"
-        class="pagination__btn pagination__btn--last"
         aria-label="Go to last page"
+        size="sm"
       >
         Last
-      </button>
+      </AppButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { AppButton } from '@/shared/ui'
 
 interface PaginationProps {
   page: number          // 1-based
@@ -138,30 +139,6 @@ function onPageSizeChange(event: Event) {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-.pagination__btn {
-  padding: 0.375rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.25rem;
-  background-color: white;
-  color: #374151;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
-  min-width: 3rem;
-}
-
-.pagination__btn:hover:not(:disabled) {
-  background-color: #f9fafb;
-  border-color: #9ca3af;
-}
-
-.pagination__btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: #f3f4f6;
 }
 
 .pagination__info {

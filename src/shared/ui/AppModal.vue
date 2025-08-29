@@ -12,14 +12,14 @@
       <div class="modal__dialog">
         <header class="modal__header" :id="titleId">
           <slot name="title">Modal Title</slot>
-          <button 
+          <AppButton 
             type="button" 
-            class="modal__close" 
             @click="onClose"
             aria-label="Close modal"
+            variant="ghost"
           >
             ×
-          </button>
+          </AppButton>
         </header>
         
         <section class="modal__body">
@@ -36,6 +36,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import { AppButton } from '@/shared/ui'
 
 interface ModalProps {
   open: boolean
@@ -87,24 +88,6 @@ function onClose() {
   padding: 1rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
   background: #f9fafb;
-}
-
-.modal__close {
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  font-weight: 300;
-  color: #6b7280;
-  cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.25rem;
-  transition: all 0.15s ease-in-out;
-  line-height: 1;
-}
-
-.modal__close:hover {
-  background: #e5e7eb;
-  color: #374151;
 }
 
 .modal__body {

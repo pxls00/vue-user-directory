@@ -5,7 +5,7 @@
       <h1 class="users-section__title">Users</h1>
       <div class="users-section__toolbar">
         <SearchBar />
-                  <AppButton variant="primary" @click="openCreate">Add user</AppButton>
+        <AppButton variant="primary" @click="openCreate">Add user</AppButton>
       </div>
     </header>
 
@@ -26,9 +26,6 @@
     <AppModal :open="isOpen" @close="close">
       <template #title>{{ modalTitle }}</template>
       <UserForm :initial="formInitial" @submit="onSubmit" @cancel="close" />
-      <template #footer>
-        <button type="button" @click="close">Cancel</button>
-      </template>
     </AppModal>
   </section>
 </template>
@@ -51,6 +48,9 @@ import { useUsersStore } from '@/entities/user'
 
 const store = useUsersStore()
 const crud = useUserCrud()
+
+// Инициализация данных сразу при создании компонента
+store.init()
 
 // Computed values from store (will be replaced with queries)
 const paged = computed(() => store.pagedUsers)
@@ -100,7 +100,6 @@ async function onSubmit(payload: UserFormValue) {
       await submitCreate(payload)
     }
   } catch (error) {
-    // TODO: Add proper error handling with toast/notification
     console.error('Form submission failed:', error)
   }
 }

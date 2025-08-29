@@ -24,43 +24,82 @@
     </tbody>
   </table>
 </template>
+
 <script setup lang="ts">
-import type { User, UsersSortKey } from '@/entities/user';
+import type { User, UserSortKey } from '@/entities/user'
 
-const props = defineProps<{
-  users: User[];
-  sort: { key: UsersSortKey; dir: 'asc'|'desc' };
-  onSortChange: (next: { key: UsersSortKey; dir: 'asc'|'desc' }) => void;
-  onEdit: (user: User) => void;
-  onDelete: (user: User) => void;
-}>();
-
-function onHeaderClick(key: UsersSortKey) {
-  const dir = props.sort.key === key && props.sort.dir === 'asc' ? 'desc' : 'asc';
-  props.onSortChange({ key, dir });
+interface UsersTableProps {
+  users: readonly User[]
+  sort: { key: UserSortKey; dir: 'asc'|'desc' }
 }
 
-function headerClass(key: UsersSortKey) {
-  if (props.sort.key !== key) return 'ut__sortable';
-  return `ut__sortable ut__sorted--${props.sort.dir}`;
+const props = defineProps<UsersTableProps>()
+
+const emit = defineEmits<{
+  (e: 'sort-change', payload: { key: UserSortKey; dir: 'asc'|'desc' }): void
+  (e: 'edit', payload: User): void
+  (e: 'delete', payload: User): void
+}>()
+
+function onHeaderClick(key: UserSortKey) {
+  const dir = props.sort.key === key && props.sort.dir === 'asc' ? 'desc' : 'asc'
+  emit('sort-change', { key, dir })
 }
 
-function pad(n: number) { return n.toString().padStart(2, '0'); }
+function onEdit(user: User) {
+  emit('edit', user)
+}
+
+function onDelete(user: User) {
+  emit('delete', user)
+}
+
+function headerClass(key: UserSortKey) {
+  if (props.sort.key !== key) return 'ut__sortable'
+  return `ut__sortable ut__sorted--${props.sort.dir}`
+}
+
+function pad(n: number) { 
+  return n.toString().padStart(2, '0') 
+}
+
 function formatDate(d: Date) {
-  const yyyy = d.getFullYear();
-  const MM = pad(d.getMonth() + 1);
-  const dd = pad(d.getDate());
-  const hh = pad(d.getHours());
-  const mm = pad(d.getMinutes());
-  return `${yyyy}-${MM}-${dd} ${hh}:${mm}`;
+  const yyyy = d.getFullYear()
+  const MM = pad(d.getMonth() + 1)
+  const dd = pad(d.getDate())
+  const hh = pad(d.getHours())
+  const mm = pad(d.getMinutes())
+  return `${yyyy}-${MM}-${dd} ${hh}:${mm}`
 }
 </script>
+
 <style scoped>
-.ut { width: 100%; border-collapse: collapse; }
-.ut th, .ut td { padding: 8px; border-bottom: 1px solid #eee; text-align: left; }
-.ut__actions { display: flex; gap: 8px; }
-.ut__sortable { cursor: pointer; }
-.ut__sorted--asc::after { content: ' \25B2'; }
-.ut__sorted--desc::after { content: ' \25BC'; }
+.ut { 
+  width: 100%; 
+  border-collapse: collapse; 
+}
+
+.ut th, .ut td { 
+  padding: 8px; 
+  border-bottom: 1px solid #eee; 
+  text-align: left; 
+}
+
+.ut__actions { 
+  display: flex; 
+  gap: 8px; 
+}
+
+.ut__sortable { 
+  cursor: pointer; 
+}
+
+.ut__sorted--asc::after { 
+  content: ' \25B2'; 
+}
+
+.ut__sorted--desc::after { 
+  content: ' \25BC'; 
+}
 </style>
 

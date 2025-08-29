@@ -1,60 +1,52 @@
 <!-- UsersSection.vue — виджет-оркестратор для страницы пользователей -->
 <template>
-  <section class="users-section">
-    <header class="users-section__header">
-      <h1 class="users-section__title">Users</h1>
-      <div class="users-section__toolbar">
-        <SearchBar />
-        <button class="users-section__add-btn" type="button" @click="openCreate">
-          Add user
-        </button>
+  <PageLayout>
+    <template #header>
+      <div class="users-section__header">
+        <h1 class="users-section__title">Users</h1>
+        <div class="users-section__toolbar">
+          <SearchBar />
+          <button class="users-section__add-btn" type="button" @click="openCreate">
+            Add user
+          </button>
+        </div>
       </div>
-    </header>
+    </template>
 
-    <main class="users-section__content">
-      <div class="users-section__table-area">
-        <UsersTable
-          :users="paged.items"
-          :sort="sort"
-          :onSortChange="onSortChange"
-          :onEdit="onEdit"
-          :onDelete="onDelete"
-        />
-      </div>
-    </main>
+    <div class="users-section__table-area">
+      <UsersTable
+        :users="paged.items"
+        :sort="sort"
+        @sort-change="onSortChange"
+        @edit="onEdit"
+        @delete="onDelete"
+      />
+    </div>
 
-    <footer class="users-section__footer">
-      <div class="users-section__footer-area">
-        <PaginationBar
-          :page="page"
-          :pageSize="pageSize"
-          :total="total"
-          @update:page="onPage"
-          @update:pageSize="onPageSize"
-        />
-      </div>
-    </footer>
+    <template #footer>
+      <UserPaginationBar />
+    </template>
 
     <!-- TODO: Replace with TanStack Query mutations -->
-    <UserFormModal :open="isOpen" @close="close">
+    <Modal :open="isOpen" @close="close">
       <template #title>{{ modalTitle }}</template>
       <UserForm :initial="formInitial" @submit="onSubmit" @cancel="close" />
       <template #footer>
         <button type="button" @click="close">Cancel</button>
       </template>
-    </UserFormModal>
-  </section>
+    </Modal>
+  </PageLayout>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useUsersStore } from '@/entities/user'
+import { PageLayout, Modal } from '@/shared/ui'
+import type { User, UserSortKey } from '@/entities/user'
+import { UserForm, type UserFormValue, useUserCrud } from '@/features/user-crud'
+import { UserPaginationBar } from '@/features/user-pagination'
 import { SearchBar } from '@/features/user-search'
 import { UsersTable } from '@/widgets/users-table'
-import { PaginationBar } from '@/widgets/pagination-bar'
-import { UserForm } from '@/features/user-crud'
-import { UserFormModal } from '@/widgets/user-form-modal'
-import { useUserCrud } from '@/features/user-crud'
+import { useUsersStore } from '@/entities/user'
 
 // TODO: Replace with TanStack Query hooks
 // const { data: users, isLoading, error } = useUsersQuery()
@@ -68,9 +60,6 @@ const crud = useUserCrud()
 // Computed values from store (will be replaced with queries)
 const paged = computed(() => store.pagedUsers)
 const sort = computed(() => store.sort)
-const page = computed(() => store.page)
-const pageSize = computed(() => store.pageSize)
-const total = computed(() => store.sortedUsers.length)
 
 // CRUD state
 const { isOpen, mode, selected, open, close, submitCreate, submitEdit, confirmDelete } = crud
@@ -94,29 +83,21 @@ function openCreate() {
   open('create')
 }
 
-function onEdit(user: any) {
+function onEdit(user: User) {
   open('edit', user)
 }
 
-function onDelete(user: any) {
+function onDelete(user: User) {
   if (confirm('Delete user?')) {
     confirmDelete(user.id)
   }
 }
 
-function onSortChange(next: { key: typeof store.sort.key; dir: typeof store.sort.dir }) {
+function onSortChange(next: { key: UserSortKey; dir: 'asc'|'desc' }) {
   store.sort = next
 }
 
-function onPage(p: number) {
-  store.page = p
-}
-
-function onPageSize(ps: number) {
-  store.pageSize = ps
-}
-
-async function onSubmit(payload: any) {
+async function onSubmit(payload: UserFormValue) {
   try {
     if (mode.value === 'edit' && selected.value) {
       await submitEdit(selected.value.id, payload)
@@ -131,12 +112,6 @@ async function onSubmit(payload: any) {
 </script>
 
 <style scoped>
-.users-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 .users-section__header {
   display: flex;
   align-items: center;
@@ -172,20 +147,7 @@ async function onSubmit(payload: any) {
   background-color: #2563eb;
 }
 
-.users-section__content {
-  min-height: 200px;
-}
-
 .users-section__table-area {
   background: transparent;
-}
-
-.users-section__footer {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.users-section__footer-area {
-  /* Footer content styling */
 }
 </style> 

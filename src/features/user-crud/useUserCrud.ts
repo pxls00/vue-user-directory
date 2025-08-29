@@ -1,6 +1,6 @@
 // useUserCrud.ts — композиционный хук для CRUD операций над пользователем
 // Почему: UI-состояние модалки и операции над стором в одном месте.
-import { ref, type Ref } from 'vue'
+import { ref } from 'vue'
 import { useUsersStore } from '@/entities/user'
 import type { User, UserId, CreateUserInput, UpdateUserInput } from '@/entities/user'
 import type { UserFormValue } from './validation'

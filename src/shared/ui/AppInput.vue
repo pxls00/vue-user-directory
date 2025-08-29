@@ -23,7 +23,7 @@ interface AppInputProps {
   placeholder?: string
   required?: boolean
   autocomplete?: string
-  inputmode?: string
+  inputmode?: 'none' | 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search'
 }
 
 interface AppInputEmits {

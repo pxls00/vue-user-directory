@@ -1,2 +1,5 @@
 export { default as FieldRow } from './FieldRow.vue'
-export { default as AppInput } from './AppInput.vue' 
+export { default as AppInput } from './AppInput.vue'
+export { default as Modal } from './Modal.vue'
+export { default as Pagination } from './Pagination.vue'
+export { default as PageLayout } from './PageLayout.vue' 

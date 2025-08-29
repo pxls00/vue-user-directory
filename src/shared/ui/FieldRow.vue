@@ -40,7 +40,7 @@
 interface FieldRowProps {
   id: string
   label?: string
-  error?: string
+  error?: string | null
   hint?: string
 }
 

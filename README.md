@@ -12,18 +12,20 @@
 - Vitest + Vue Test Utils (базовые юнит-тесты)
 
 ## **Запуск**
+Версия NODE: v22+
+
 
 ```
 npm i
 npm run dev
-# откройте указанный в терминале адрес
+# откройте указанный в терминале адрес (localhost:8080)
 ```
 
 ## **Сборка**
 
 ```
 npm run build
-npm run preview
+npm run preview (localhost:3000)
 ```
 
 ## **Тесты**
